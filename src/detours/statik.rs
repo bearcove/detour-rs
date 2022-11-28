@@ -1,6 +1,9 @@
 use crate::error::{Error, Result};
 use crate::{Function, GenericDetour};
-use std::sync::atomic::{AtomicPtr, Ordering};
+use std::{
+  marker::Tuple,
+  sync::atomic::{AtomicPtr, Ordering},
+};
 use std::{mem, ptr};
 
 /// A type-safe static detour.
@@ -67,7 +70,10 @@ pub struct StaticDetour<T: Function> {
   ffi: T,
 }
 
-impl<T: Function> StaticDetour<T> {
+impl<T: Function> StaticDetour<T>
+where
+  T::Arguments: Tuple,
+{
   /// Create a new static detour.
   #[doc(hidden)]
   pub const fn __new(ffi: T) -> Self {
